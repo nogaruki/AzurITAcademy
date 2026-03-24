@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Fraunces:ital,wght@0,400;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design tokens — thème sombre (défaut) ─── */
+@layer base {
+  :root {
+    --bg-deep:        #0a0b0f;
+    --bg-card:        #12141c;
+    --bg-card-hover:  #181b27;
+    --bg-surface:     #1a1d2b;
+    --bg-nav:         #0a0b0fdd;
+    --bg-code:        #0d0e14;
+    --border:         #2a2e3f;
+    --border-active:  #4a5080;
+    --text-primary:   #e8eaf0;
+    --text-secondary: #8890a8;
+    --text-muted:     #555a72;
+    --accent:         #6c8cff;
+    --accent-glow:    #6c8cff40;
+    --accent-bright:  #8aa4ff;
+    --green:          #4ade80;
+    --green-glow:     #4ade8030;
+    --orange:         #fb923c;
+    --orange-glow:    #fb923c30;
+    --red:            #f87171;
+    --red-glow:       #f8717130;
+    --cyan:           #22d3ee;
+    --cyan-glow:      #22d3ee20;
+    --purple:         #a78bfa;
+  }
+
+  /* ─── Design tokens — thème clair ─── */
+  [data-theme="light"] {
+    --bg-deep:        #f0f2f8;
+    --bg-card:        #ffffff;
+    --bg-card-hover:  #f5f7fc;
+    --bg-surface:     #e8ebf5;
+    --bg-nav:         #ffffffd8;
+    --bg-code:        #f3f4f9;
+    --border:         #d2d6e8;
+    --border-active:  #9aa2c4;
+    --text-primary:   #1a1d2e;
+    --text-secondary: #525878;
+    --text-muted:     #8890aa;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: "Outfit", sans-serif;
+    overflow-x: hidden;
+    transition: background-color 0.35s, color 0.35s;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-deep); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+}
+
+/* ─── Animations (hors @layer pour compatibilité) ─── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes nodeGlow {
+  0%, 100% { filter: drop-shadow(0 0 6px var(--accent-glow)); }
+  50%       { filter: drop-shadow(0 0 16px var(--accent-glow)); }
+}
+
+/* ─── Composants réutilisables ─── */
+@layer components {
+
+  /* ── Bouton de contrôle (Controls, VizTab, CodeEditor) ── */
+  .ctrl-btn {
+    @apply flex items-center justify-center w-[38px] h-[38px] rounded-[10px]
+           border border-line bg-surface text-pri cursor-pointer text-[16px]
+           transition-all duration-150;
+    font-family: inherit;
+  }
+  .ctrl-btn:hover:not(:disabled) { @apply border-accent text-accent; }
+  .ctrl-btn:disabled             { @apply opacity-30 cursor-not-allowed; }
+  .ctrl-btn.active               { @apply bg-accent-dim border-accent text-accent; }
+
+  /* ── Bouton d'action (GraphBuilder, QuizScore) ── */
+  .add-btn {
+    @apply px-[18px] py-2 rounded-lg border border-accent bg-accent-dim text-accent-hi
+           text-[13px] font-semibold cursor-pointer transition-all duration-150 font-sans;
+  }
+  .add-btn:hover { @apply bg-accent text-white; }
+
+  /* ── Sélecteur de vitesse ── */
+  .speed-select {
+    @apply px-3 py-[6px] rounded-lg border border-line bg-surface text-pri text-[13px] font-sans cursor-pointer;
+  }
+
+  /* ── Panel ── */
+  .panel        { @apply bg-card border border-line rounded-[14px] overflow-hidden; }
+  .panel-header {
+    @apply flex items-center justify-between px-[18px] py-[14px] border-b border-line
+           text-[13px] font-semibold tracking-[0.5px] uppercase text-sec;
+  }
+  .panel-body { @apply p-5; }
+
+  /* ── Contenu de section (SectionContent, CodeEditor, ComplexityTab) ── */
+  .section-content {
+    @apply p-5 leading-[1.8] text-[15px] text-sec;
+  }
+  .section-content strong { @apply text-pri font-semibold; }
+
+  /* ── Badges du journal d'exécution ── */
+  .step-badge {
+    @apply inline-block text-[10px] font-bold uppercase py-[2px] px-[6px]
+           rounded-[4px] mr-[6px] tracking-[0.5px];
+  }
+  .badge-init  { @apply bg-line text-sec; }
+  .badge-visit { @apply bg-c-green-dim text-c-green; }
+  .badge-relax { @apply bg-accent-dim text-accent-hi; }
+  .badge-skip  { @apply bg-c-orange-dim text-c-orange; }
+  .badge-done  { @apply bg-c-cyan-dim text-c-cyan; }
+
+  /* ── Cellules du tableau des distances ── */
+  .dist-cell             { @apply transition-all duration-300 rounded-[6px]; }
+  .dist-cell.updated     { @apply bg-accent-dim text-accent-hi font-bold; }
+  .dist-cell.visited-cell { @apply text-c-green; }
+
+  /* ── Options du quiz ── */
+  .quiz-opt {
+    @apply px-[14px] py-[10px] rounded-lg border border-line bg-card text-sec
+           cursor-pointer transition-all duration-150 text-[14px] text-left font-sans;
+  }
+  .quiz-opt:hover:not(.opt-correct):not(.opt-wrong) { @apply border-accent text-pri; }
+  .opt-correct { @apply !border-c-green !bg-c-green-dim !text-c-green; }
+  .opt-wrong   { @apply !border-c-red   !bg-c-red-dim   !text-c-red; }
+
+  /* ── Champ de saisie (GraphBuilder) ── */
+  .input-field {
+    @apply px-3 py-2 rounded-lg border border-line bg-surface text-pri font-mono
+           text-[13px] w-[120px] outline-none transition-[border-color] duration-200
+           focus:border-accent;
+  }
+  .input-field.wide { @apply w-[200px]; }
+
+  /* ── Pseudo-éléments des course cards ── */
+  .course-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--cyan));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .course-card:hover::before { opacity: 1; }
+
+  .card-locked::after {
+    content: 'Bientôt';
+    position: absolute;
+    top: 14px; right: 14px;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  /* ── Theme switch thumb (thème clair) ── */
+  [data-theme="light"] .theme-switch-thumb {
+    background: var(--accent-glow);
+    border-color: var(--accent);
+  }
+}
+
+/* ─── Utilitaires ─── */
+@layer utilities {
+  .node-glow          { animation: nodeGlow 1.5s ease-in-out infinite; }
+  .animate-pulse-slow { animation: pulse 2s infinite; }
+
+  .gradient-text {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tab-2 { tab-size: 2; }
+}
