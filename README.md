@@ -626,5 +626,5 @@ Then update:
 
 ## 📄 License
 
-Projet privé — AzurIT Academy © 2025. Tous droits réservés.
-Private project — AzurIT Academy © 2025. All rights reserved.
+Ce projet est open-source et distribué sous la licence **MIT**.
+This project is open-source and distributed under the **MIT** license.
